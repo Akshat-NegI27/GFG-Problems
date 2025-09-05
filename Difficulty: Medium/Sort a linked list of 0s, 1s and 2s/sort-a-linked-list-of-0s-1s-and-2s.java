@@ -1,105 +1,45 @@
-//{ Driver Code Starts
-import java.io.*;
-import java.util.*;
-
+/*
 class Node {
     int data;
     Node next;
 
-    Node(int x) {
-        data = x;
+    Node(int d) {
+        data = d;
         next = null;
     }
 }
+*/
 
-
-// } Driver Code Ends
-
-/* class Node
-{
-    int data;
-    Node next;
-    Node(int data)
-    {
-        this.data = data;
-        next = null;
-    }
-}*/
 class Solution {
-    static Node segregate(Node head) {
-        // code here
-         int zeros=0, ones=0, twos=0;
-        Node head1=head;
-        while(head1!=null){
-            if(head1.data==0){
-                zeros++;
+    public Node segregate(Node head) {
+        if (head == null || head.next == null) return head;
+
+        // Dummy heads for 0, 1, and 2 lists
+        Node zeroD = new Node(-1), oneD = new Node(-1), twoD = new Node(-1);
+        Node zero = zeroD, one = oneD, two = twoD;
+
+        // Traverse the list and link nodes into respective lists
+        Node curr = head;
+        while (curr != null) {
+            if (curr.data == 0) {
+                zero.next = curr;
+                zero = zero.next;
+            } else if (curr.data == 1) {
+                one.next = curr;
+                one = one.next;
+            } else {
+                two.next = curr;
+                two = two.next;
             }
-            if(head1.data==1){
-                ones++;
-            }
-            if(head1.data==2){
-                twos++;
-            }
-            head1=head1.next;
+            curr = curr.next;
         }
-        head1=head;
-        while(head1 !=null){
-            if(zeros != 0){
-                head1.data=0;
-                zeros--;
-            }
-           else if(ones != 0){
-                head1.data=1;
-                ones--;
-            }
-           else if(twos != 0){
-                head1.data=2;
-                twos--;
-            }
-            head1=head1.next;
-        }
-        return head;
+
+        // Connect three lists: 0 -> 1 -> 2
+        zero.next = (oneD.next != null) ? oneD.next : twoD.next;
+        one.next = twoD.next;
+        two.next = null; // end of list
+
+        // Head is first non-empty list
+        return zeroD.next != null ? zeroD.next : (oneD.next != null ? oneD.next : twoD.next);
     }
 }
-
-
-
-//{ Driver Code Starts.
-
-class GFG {
-    public static void printList(Node node) {
-        while (node != null) {
-            System.out.print(node.data + " ");
-            node = node.next;
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int t = Integer.parseInt(br.readLine().trim());
-
-        while (t-- > 0) {
-            List<Integer> arr = new ArrayList<>();
-            String input = br.readLine().trim();
-            StringTokenizer st = new StringTokenizer(input);
-            while (st.hasMoreTokens()) {
-                arr.add(Integer.parseInt(st.nextToken()));
-            }
-
-            Node head = null;
-            if (!arr.isEmpty()) {
-                head = new Node(arr.get(0));
-                Node tail = head;
-                for (int i = 1; i < arr.size(); i++) {
-                    tail.next = new Node(arr.get(i));
-                    tail = tail.next;
-                }
-            }
-            head = new Solution().segregate(head);
-            printList(head);
-            System.out.println("~");
-        }
-    }
-}
-// } Driver Code Ends
