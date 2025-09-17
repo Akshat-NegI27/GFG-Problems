@@ -1,57 +1,29 @@
-//{ Driver Code Starts
-import java.io.*;
-import java.util.*;
-
-class GFG {
-    public static void main(String args[]) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out = new PrintWriter(System.out);
-        int t = Integer.parseInt(in.readLine());
-        while (t-- > 0) {
-            String s = in.readLine();
-
-            Solution ob = new Solution();
-            out.println(ob.decodeString(s));
-
-            out.println("~");
-        }
-        out.close();
-    }
-}
-// } Driver Code Ends
-
-
-
 class Solution {
     static String decodeString(String s) {
-        Stack<Character> st = new Stack<>();
-        for (int i = 0; i < s.length(); i++) {
-            // Push characters into the stack until ']' is encountered
-            if (s.charAt(i) != ']') {
-                st.push(s.charAt(i));
-            }
-            else {
-                StringBuilder temp = new StringBuilder();
-                while (!st.isEmpty() && st.peek() != '[') {
-                    temp.insert(0, st.pop());
-                }
-                st.pop();
+        Stack<Integer> countStack = new Stack<>();
+        Stack<StringBuilder> strStack = new Stack<>();
+        StringBuilder current = new StringBuilder();
+        int k = 0;
 
-                StringBuilder num = new StringBuilder();
-                while (!st.isEmpty() && Character.isDigit(st.peek())) {
-                    num.insert(0, st.pop());
+        for (char c : s.toCharArray()) {
+            if (Character.isDigit(c)) {
+                k = k * 10 + (c - '0');
+            } else if (c == '[') {
+                countStack.push(k);
+                strStack.push(current);
+                current = new StringBuilder();
+                k = 0;
+            } else if (c == ']') {
+                int repeat = countStack.pop();
+                StringBuilder decoded = strStack.pop();
+                for (int i = 0; i < repeat; i++) {
+                    decoded.append(current);
                 }
-                int number = Integer.parseInt(num.toString());
-                StringBuilder repeat = new StringBuilder();
-                for (int j = 0; j < number; j++) repeat.append(temp);
-                for (char c : repeat.toString().toCharArray()) st.push(c);
+                current = decoded;
+            } else {
+                current.append(c);
             }
         }
-
-        StringBuilder res = new StringBuilder();
-        while (!st.isEmpty()) {
-            res.insert(0, st.pop());
-        }
-        return res.toString();
+        return current.toString();
     }
 }
