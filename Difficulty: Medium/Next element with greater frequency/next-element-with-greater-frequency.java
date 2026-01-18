@@ -1,26 +1,20 @@
 class Solution {
-    public ArrayList<Integer> findGreater(int[] arr) {
+    public ArrayList<Integer> nextFreqGreater(int[] arr) {
         int n = arr.length;
-        ArrayList<Integer> result = new ArrayList<>(Collections.nCopies(n, -1));
-        Stack<Integer> stack = new Stack<>();
-        Map<Integer, Integer> freq = new HashMap<>();
+        HashMap<Integer, Integer> freq = new HashMap<>();
+        for (int x : arr) freq.put(x, freq.getOrDefault(x, 0) + 1);
 
-        for (int num : arr) {
-            freq.put(num, freq.getOrDefault(num, 0) + 1);
-        }
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < n; i++) res.add(-1);
 
-        for (int i = n - 1; i >= 0; i--) {
-            while (!stack.isEmpty() && freq.get(arr[stack.peek()]) <= freq.get(arr[i])) {
-                stack.pop();
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!st.isEmpty() && freq.get(arr[st.peek()]) < freq.get(arr[i])) {
+                res.set(st.pop(), arr[i]);
             }
-
-            if (!stack.isEmpty()) {
-                result.set(i, arr[stack.peek()]);
-            }
-
-            stack.push(i);
+            st.push(i);
         }
-
-        return result;
+        return res;
     }
 }
