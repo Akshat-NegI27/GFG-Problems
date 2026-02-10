@@ -1,31 +1,29 @@
 class Solution {
     public int kokoEat(int[] arr, int k) {
-        int low = 1;
-        int high = 0;
-        for (int bananas : arr) {
-            high = Math.max(high, bananas); // max of array
+        int low = 1, high = 0;
+
+        for (int x : arr) {
+            high = Math.max(high, x);
         }
 
-        int result = high;
+        int ans = high;
 
         while (low <= high) {
             int mid = low + (high - low) / 2;
-            if (canFinish(arr, k, mid)) {
-                result = mid;
-                high = mid - 1; // try to find a smaller s
+
+            long hours = 0;
+            for (int x : arr) {
+                hours += (x + mid - 1) / mid;
+            }
+
+            if (hours <= k) {
+                ans = mid;
+                high = mid - 1;
             } else {
-                low = mid + 1; // increase s
+                low = mid + 1;
             }
         }
 
-        return result;
-    }
-
-    private boolean canFinish(int[] arr, int k, int s) {
-        int totalHours = 0;
-        for (int bananas : arr) {
-            totalHours += (bananas + s - 1) / s; // ceil(bananas/s)
-        }
-        return totalHours <= k;
+        return ans;
     }
 }
