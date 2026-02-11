@@ -1,41 +1,41 @@
 class Solution {
-    
-    private int check(int[] heights, int[] cost, int mid) {
-        int n = cost.length;
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            int val = Math.abs(heights[i] - mid);
-            ans += val * cost[i];
+
+    private long getCost(int[] heights, int[] cost, int target) {
+        long totalCost = 0;
+
+        for (int i = 0; i < heights.length; i++) {
+            totalCost += 1L * Math.abs(heights[i] - target) * cost[i];
         }
-        return ans;
+
+        return totalCost;
     }
 
     public int minCost(int[] heights, int[] cost) {
-        int n = heights.length;
-        int l = Integer.MAX_VALUE;
-        int r = Integer.MIN_VALUE;
-        
-        // Find min and max in heights
+        int left = Integer.MAX_VALUE;
+        int right = Integer.MIN_VALUE;
+
         for (int h : heights) {
-            l = Math.min(l, h);
-            r = Math.max(r, h);
+            left = Math.min(left, h);
+            right = Math.max(right, h);
         }
 
-        int ans = 0;
+        long answer = Long.MAX_VALUE;
 
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            int cost1 = check(heights, cost, mid);
-            int cost2 = check(heights, cost, mid + 1);
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
 
-            if (cost1 <= cost2) {
-                ans = cost1;
-                r = mid - 1;
+            long cost1 = getCost(heights, cost, mid);
+            long cost2 = getCost(heights, cost, mid + 1);
+
+            answer = Math.min(cost1, cost2);
+
+            if (cost1 < cost2) {
+                right = mid - 1;
             } else {
-                l = mid + 1;
+                left = mid + 1;
             }
         }
 
-        return ans;
+        return (int) answer;
     }
 }
