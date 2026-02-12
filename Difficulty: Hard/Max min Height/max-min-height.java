@@ -1,52 +1,43 @@
 class Solution {
+
     public int maxMinHeight(int[] arr, int k, int w) {
         int n = arr.length;
-        int low = Integer.MAX_VALUE;
-        int high = Integer.MAX_VALUE;
 
-        for (int num : arr) {
-            low = Math.min(low, num);
-        }
+        long low = Integer.MAX_VALUE;
+        long high = low + k;
 
-        high = low + k;
+        for (int x : arr) low = Math.min(low, x);
 
-        int result = low;
+        while (low < high) {
+            long mid = (low + high + 1) / 2;
 
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-
-            if (isPossible(arr, n, k, w, mid)) {
-                result = mid;
-                low = mid + 1;
-            } else {
+            if (canMake(arr, k, w, mid))
+                low = mid;
+            else
                 high = mid - 1;
-            }
         }
 
-        return result;
+        return (int) low;
     }
 
-    private boolean isPossible(int[] arr, int n, int k, int w, int minHeight) {
-        long[] water = new long[n + 2];
-        long currentWater = 0;
-        long totalWaterUsed = 0;
+    private boolean canMake(int[] arr, int k, int w, long target) {
+        int n = arr.length;
+        long[] diff = new long[n + 1];
+        long currAdd = 0;
+        long used = 0;
 
         for (int i = 0; i < n; i++) {
-            currentWater += water[i];
-            long currentHeight = arr[i] + currentWater;
+            currAdd += diff[i];
+            long height = arr[i] + currAdd;
 
-            if (currentHeight < minHeight) {
-                long need = minHeight - currentHeight;
-                totalWaterUsed += need;
+            if (height < target) {
+                long need = target - height;
+                used += need;
+                if (used > k) return false;
 
-                if (totalWaterUsed > k) {
-                    return false;
-                }
-
-                currentWater += need;
-                if (i + w < water.length) {
-                    water[i + w] -= need;
-                }
+                currAdd += need;
+                if (i + w < diff.length)
+                    diff[i + w] -= need;
             }
         }
 
