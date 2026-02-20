@@ -1,6 +1,8 @@
 class Solution {
     public String findLargest(int[] arr) {
+
         String[] nums = new String[arr.length];
+
         for (int i = 0; i < arr.length; i++) {
             nums[i] = String.valueOf(arr[i]);
         }
@@ -9,11 +11,11 @@ class Solution {
 
         if (nums[0].equals("0")) return "0";
 
-        StringBuilder sb = new StringBuilder();
-        for (String num : nums) {
-            sb.append(num);
+        StringBuilder result = new StringBuilder();
+        for (String s : nums) {
+            result.append(s);
         }
 
-        return sb.toString();
+        return result.toString();
     }
 }
