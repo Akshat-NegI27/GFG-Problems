@@ -1,30 +1,20 @@
-
 class Solution {
-    public int longestCommonSum(int[] a1, int[] a2) {
+    public int equalSumSpan(int[] a1, int[] a2) {
         int n = a1.length;
-        int[] diff = new int[n];
-
-        // Create difference array
-        for (int i = 0; i < n; i++) {
-            diff[i] = a1[i] - a2[i];
-        }
-
-        // Map to store prefix sum and its first occurrence
+        
         HashMap<Integer, Integer> map = new HashMap<>();
+        int diff = 0;
         int maxLen = 0;
-        int sum = 0;
+
+        map.put(0, -1);
 
         for (int i = 0; i < n; i++) {
-            sum += diff[i];
+            diff += a1[i] - a2[i];
 
-            if (sum == 0) {
-                maxLen = i + 1;
-            }
-
-            if (map.containsKey(sum)) {
-                maxLen = Math.max(maxLen, i - map.get(sum));
+            if (map.containsKey(diff)) {
+                maxLen = Math.max(maxLen, i - map.get(diff));
             } else {
-                map.put(sum, i);
+                map.put(diff, i);
             }
         }
 
