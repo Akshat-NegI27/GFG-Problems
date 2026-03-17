@@ -1,54 +1,69 @@
-/*
-class Node {
-    int data;
-    Node left;
-    Node right;
-
-    Node(int data) {
-        this.data = data;
-        left = null;
-        right = null;
-    }
-}  */
-
+import java.util.*;
 
 class Solution {
-    int max = -1;
-
-    private static class Pair {
-        int height;
-        boolean found;
-
-        Pair(int height, boolean found) {
-            this.height = height;
-            this.found = found;
-        }
-    }
-
     public int minTime(Node root, int target) {
-        helper(root, target);
-        return max;
+        HashMap<Node, Node> parent = new HashMap<>();
+        Node targetNode = markParents(root, parent, target);
+
+        Queue<Node> q = new LinkedList<>();
+        HashSet<Node> visited = new HashSet<>();
+
+        q.add(targetNode);
+        visited.add(targetNode);
+
+        int time = -1;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+            time++;
+
+            for (int i = 0; i < size; i++) {
+                Node node = q.poll();
+
+                if (node.left != null && !visited.contains(node.left)) {
+                    visited.add(node.left);
+                    q.add(node.left);
+                }
+
+                if (node.right != null && !visited.contains(node.right)) {
+                    visited.add(node.right);
+                    q.add(node.right);
+                }
+
+                if (parent.containsKey(node) && !visited.contains(parent.get(node))) {
+                    visited.add(parent.get(node));
+                    q.add(parent.get(node));
+                }
+            }
+        }
+
+        return time;
     }
 
-    private Pair helper(Node root, int target) {
-        if (root == null) {
-            return new Pair(0, false);
+    Node markParents(Node root, HashMap<Node, Node> parent, int target) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+
+        Node targetNode = null;
+
+        while (!q.isEmpty()) {
+            Node node = q.poll();
+
+            if (node.data == target) {
+                targetNode = node;
+            }
+
+            if (node.left != null) {
+                parent.put(node.left, node);
+                q.add(node.left);
+            }
+
+            if (node.right != null) {
+                parent.put(node.right, node);
+                q.add(node.right);
+            }
         }
 
-        Pair left = helper(root.left, target);
-        Pair right = helper(root.right, target);
-
-        if (root.data == target) {
-            max = Math.max(left.height, right.height);
-            return new Pair(0, true);
-        }
-
-        if (left.found || right.found) {
-            max = Math.max(max, (left.found ? left.height : right.height) + 
-                                (left.found ? right.height : left.height) + 1);
-            return new Pair((left.found ? left.height : right.height) + 1, true);
-        }
-
-        return new Pair(Math.max(left.height, right.height) + 1, false);
+        return targetNode;
     }
 }
